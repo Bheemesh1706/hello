@@ -162,13 +162,13 @@ function App() {
 
                   <ModalContainerRight>
                       <Text weight={"400"} bottom={"20px"}>User Information</Text>
-                      <Text weight={"400"} bottom={"10px"} size={"15px"}>User Name</Text>
-                      <Input bottom={"25px"} onChange={(e)=>{
+                      <Text weight={"400"} bottom={"5px"} size={"15px"}>User Name</Text>
+                      <Input bottom={"50px"} onChange={(e)=>{
 
                         setName(e.target.value);
                         
                       }}></Input>
-                      <Text weight={"400"} size={"15px"} bottom={"15px"}>Role</Text>
+                      <Text weight={"400"} size={"15px"} bottom={"5px"}>Role</Text>
                       <Select width={"50%"} onChange={(e)=>{
                         setRole(e.target.value);
                       }}>
@@ -287,7 +287,7 @@ const NavBarLeft = styled.div`
   height: 100%;
   width: 22%;
   display: flex;
-  justify-content: space-around;
+  justify-content: spaced-evenly;
   align-items: center;
 `;
 
@@ -315,7 +315,7 @@ const MainBody = styled.section`
 
 const LeftContainer = styled.section`
   height: 100%;
-  width: 22%;
+  width: 20%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -325,7 +325,7 @@ const LeftContainer = styled.section`
 
 const RightContainer = styled.section`
   height: 100%;
-  width: 78%;
+  width: 80%;
   padding-top: 40px;
   position: relative;
 `;
