@@ -1,9 +1,10 @@
 import styled from "styled-components";
-import {useState} from "react";
+import {useState,useEffect} from "react";
 import Icon from '../src/assests/Icon.png';
 import Git from '../src/assests/git.svg';
 import User from '../src/assests/add-user.png';
 import Delete from '../src/assests/bin.png';
+import Work from '../src/assests/work-in-progress.png' 
 
 import {
   useToast,
@@ -18,24 +19,44 @@ function App() {
  
   const [list]=useState(["Products","Demo Script","Customers","Sales Team","Demos","Settings"]);
   const [user,setUser]= useState([{
+    id:0,
     name:"Bheemesh",
     signin:"1 Day ago",
     role:"Owner"
-  },{
-    name:"Bheemesh",
+  },{id:1,
+    name:"Danoosh",
     signin:"1 Day ago",
-    role:"Owner"
-  },{
-    name:"Bheemesh",
+    role:"Sales"
+  },{id:2,
+    name:"Anajali",
     signin:"1 Day ago",
-    role:"Owner"
+    role:"Admin"
   }]);
+
+  const [name,setName]=useState('');
+  const [role,setRole]=useState('Admin');
+  const [menu,setMenu]=useState('');
   const [limit,setLimit]= useState(100);
   const [page,setPage] = useState(1);
   const toast = useToast();
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [add,setAdd]=useState(false);
+  useEffect(()=>{
+
+    if(window.performance)
+    { if(performance.navigation.type==1)
+        {
+          var stored_datas = JSON.parse(localStorage["user"]);
+          setUser(stored_datas);
+        }}
+  },[]);
+
+  useEffect(()=>{
+  },[add]);
+
 
   return (
+
    <Container>
 
         <NavBar>
@@ -52,94 +73,137 @@ function App() {
         <MainBody>
             <LeftContainer>
               {
-                list.map((data,index)=><ListSpan ><Text key={index} weight={"500"} color={"#898989"} left={"25px"} bottom={"40px"}>{data}</Text></ListSpan>)
+                list.map((data,index)=><ListSpan style={{backgroundColor:menu==data?"#00D676":""}} onClick={()=>{
+                  setMenu(data);
+                }}><Text key={index} weight={"500"} color={"#898989"} left={"25px"} bottom={"40px"} >{data}</Text></ListSpan>)
               }
             </LeftContainer>
 
             <RightContainer>
-              <AddUserButton onClick={onOpen}>ADD USER</AddUserButton>
 
-               
-                    <Table>
-                      
-                        <Tr>
-                          <Th >#</Th>
-                          <Th >User</Th>
-                          <Th >Last Signed In</Th>
-                          <Th >Role</Th>
-                          <Th > </Th>
-                        </Tr>
-                       { user.map((data,index)=><Tr>
-                          <Td>{index+1}</Td>
-                          <Td>{data.name}</Td>
-                          <Td>{data.signin}</Td>
-                          <Td>{data.role}</Td>
-                          <Td> </Td>
-                        </Tr>
-                        )}
-                     
-                    </Table>
-              
+                  {menu==="Settings"?
+                  <> <AddUserButton onClick={onOpen}>ADD USER</AddUserButton>
 
-              <ButtonContainer  left={"77%"}  top  bottom={"10"}>
+                  
+                  <Table>
+                    
+                      <Tr>
+                        <Th >#</Th>
+                        <Th >User</Th>
+                        <Th >Last Signed In</Th>
+                        <Th >Role</Th>
+                        <Th > </Th>
+                      </Tr>
+                    { user.map((data,index)=><Tr>
+                        <Td>{index+1}</Td>
+                        <Td>{data.name}</Td>
+                        <Td>{data.signin}</Td>
+                        <Td>{data.role}</Td>
+                        <Td> <ImageContainer src={Delete} height={"25px"} style={{backgroundColor:"#32DC87",padding:"5px",borderRadius:"50%"}}
+                        onClick={()=>{
+                          var array_list = user;
+                          if(array_list.length===1)
+                            {
+                              array_list.shift();
+                            }
+                          else{
+                            array_list.splice(index,index);
+                          }
+                          localStorage.removeItem('user');
+                          localStorage['user']=JSON.stringify(array_list);
+                          setUser(array_list);
+                          setAdd(!add);
+                        }}
+                        
+                        /></Td>
+                      </Tr>
+                      )}
+                  
+                  </Table>
+            
 
-              <Button right={"25px"} onClick={()=>{
-                  if(limit>100)
-                  {
-                    setLimit(limit-100);
-                    setPage(page-1);
-                  }
-                  else{
-                    toast({
-                      title: `This is the lest number of data can be shown per page`,
-                      status: "info",
-                      isClosable: true,
-                    })
-                  }
-                }}>Previous</Button>
+            {/* <ButtonContainer  left={"77%"}  top  bottom={"10"}>
 
-                <Button onClick={()=>{
-                  setLimit(limit+100);
-                  setPage(page+1);
+            <Button right={"25px"} onClick={()=>{
+                if(limit>100)
+                {
+                  setLimit(limit-100);
+                  setPage(page-1);
+                }
+                else{
                   toast({
-                    title: `Table updated by ${limit} rows`,
+                    title: `This is the lest number of data can be shown per page`,
                     status: "info",
                     isClosable: true,
                   })
-                }}>Next</Button>
+                }
+              }}>Previous</Button>
 
-             </ButtonContainer>
+              <Button onClick={()=>{
+                setLimit(limit+100);
+                setPage(page+1);
+                toast({
+                  title: `Table updated by ${limit} rows`,
+                  status: "info",
+                  isClosable: true,
+                })
+              }}>Next</Button>
 
-             <Modal isOpen={isOpen} onClose={onClose}>
-              <ModalContent>
-                  <ModalContainer>
+          </ButtonContainer> */}
 
-                    <ModalContainerLeft>
-                          <ImageContainer src={User} style={{height:"175px",width:"175px"}}/>
-                            <Text size={"10px"} weight={"400"} style={{marginTop:"15px" , padding:"10px"}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</Text>
-                    </ModalContainerLeft>
+          <Modal isOpen={isOpen} onClose={onClose}>
+            <ModalContent>
+                <ModalContainer>
 
-                    <ModalContainerRight>
-                        <Text weight={"400"} bottom={"20px"}>User Information</Text>
-                        <Text weight={"400"} bottom={"10px"} size={"15px"}>User Name</Text>
-                        <Input bottom={"25px"}></Input>
-                        <Text weight={"400"} size={"15px"} bottom={"15px"}>Role</Text>
-                        <Select width={"50%"}>
-                            <option value='Admin'>Admin</option>
-                            <option value='Owner'>Owner</option>
-                            <option value='Sales'>Sales</option>
-                        </Select>
+                  <ModalContainerLeft>
+                        <ImageContainer src={User} style={{height:"175px",width:"175px"}}/>
+                          <Text size={"10px"} weight={"400"} style={{marginTop:"15px" , padding:"10px"}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</Text>
+                  </ModalContainerLeft>
 
-                        <ButtonContainer left={"35%"} style={{justifyContent:"space-between",width:"40%"}} top bottom={"50px"}>
-                                <ModalButton backgroundcolor={"#FEC918"} onClick={onClose}>Cancel</ModalButton>
-                                <ModalButton backgroundcolor={"#32DC87"}>Add</ModalButton>
-                        </ButtonContainer>
-                    </ModalContainerRight>
+                  <ModalContainerRight>
+                      <Text weight={"400"} bottom={"20px"}>User Information</Text>
+                      <Text weight={"400"} bottom={"10px"} size={"15px"}>User Name</Text>
+                      <Input bottom={"25px"} onChange={(e)=>{
 
-                  </ModalContainer>
-                 
-              </ModalContent>
-            </Modal>
+                        setName(e.target.value);
+                        
+                      }}></Input>
+                      <Text weight={"400"} size={"15px"} bottom={"15px"}>Role</Text>
+                      <Select width={"50%"} onChange={(e)=>{
+                        setRole(e.target.value);
+                      }}>
+                          <option value='Admin'>Admin</option>
+                          <option value='Owner'>Owner</option>
+                          <option value='Sales'>Sales</option>
+                      </Select>
+
+                      <ButtonContainer left={"35%"} style={{justifyContent:"space-between",width:"40%"}} top bottom={"50px"}>
+                              <ModalButton backgroundcolor={"#FEC918"} onClick={onClose}>Cancel</ModalButton>
+                              <ModalButton backgroundcolor={"#32DC87"} onClick={()=>{
+                                var id =user.length;
+                                var temp =user;
+                                var current={
+                                  id:id,
+                                  name:name,
+                                  signin:"1 Day ago",
+                                  role:role
+                                }
+                                temp.push(current);
+                                setUser(temp);
+                                localStorage.removeItem('user');
+                                localStorage['user']=JSON.stringify(user);
+                                onClose();
+                              }}>Add</ModalButton>
+                      </ButtonContainer>
+                  </ModalContainerRight>
+
+                </ModalContainer>
+              
+            </ModalContent>
+          </Modal></>:<Construction>
+            <ImageContainer src={Work} height={"300px"}></ImageContainer>
+          </Construction>
+                 }
 
             </RightContainer>
 
@@ -153,6 +217,14 @@ function App() {
 const Container = styled.div`
   height: 100vh;
   width: 100vw;
+`;
+
+const Construction = styled.div`
+  display: flex;
+  height: 80%;
+  width: 100%;
+  align-items: center;
+  justify-content: center;
 `;
 const NavBar = styled.section`
   height: 50px;
@@ -192,7 +264,7 @@ const Text = styled.p`
 const ListSpan = styled.span`
       height: 50px;
       width:100%;
-        padding: 15px 0 50px 0;
+      padding: 15px 0 50px 0;
       &:hover {
         background-color: #00D676;
         color: white;
@@ -229,6 +301,7 @@ const ImageContainer =styled.img`
     return p.height? p.height:"50px";
     }};
 `;
+
 
 const NavBarRight =  styled(NavBarLeft)`
   justify-content: center;
