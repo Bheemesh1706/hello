@@ -1,64 +1,88 @@
 import styled from "styled-components";
 import {useState} from "react";
-import Git from '/home/kirito/Documents/React/hello/src/assests/git.svg';
+import Icon from '../src/assests/Icon.png';
+import Git from '../src/assests/git.svg';
+import User from '../src/assests/add-user.png';
+import Delete from '../src/assests/bin.png';
+
 import {
-  Table,
-  Thead,
-  Tbody,
-  Tfoot,
-  Tr,
-  Th,
-  Td,
-  TableCaption,
-  TableContainer,
-  useToast
+  useToast,
+  Modal,
+  ModalContent,
+  useDisclosure,
+  Select
 } from '@chakra-ui/react';
 
 function App() {
 
+ 
   const [list]=useState(["Products","Demo Script","Customers","Sales Team","Demos","Settings"]);
+  const [user,setUser]= useState([{
+    name:"Bheemesh",
+    signin:"1 Day ago",
+    role:"Owner"
+  },{
+    name:"Bheemesh",
+    signin:"1 Day ago",
+    role:"Owner"
+  },{
+    name:"Bheemesh",
+    signin:"1 Day ago",
+    role:"Owner"
+  }]);
   const [limit,setLimit]= useState(100);
   const [page,setPage] = useState(1);
   const toast = useToast();
+  const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
    <Container>
 
         <NavBar>
           <NavBarLeft>
-              <ImageContainer src={Git}/>
-              <Text>My Application</Text>
+              <ImageContainer src={Icon} height={"40px"}/>
+              <Text weight={"400"} color={"#898989"} style={{borderLeft:"0.1px solid lightgrey" ,paddingLeft:"10px"}}>MY APPLICATION</Text>
           </NavBarLeft>
           <NavBarRight>
-              <ImageContainer src={Git} right={"10px"}/>
-              <Text>Bheemesh</Text>
+              <ImageContainer src={Git} right={"10px"} height={"40px"} style={{borderLeft:"1px solid lightgrey" ,paddingLeft:"20px"}}/>
+              <Text size={"12px"} weight={"500"}>Bheemesh</Text>
           </NavBarRight>
         </NavBar>
 
         <MainBody>
             <LeftContainer>
               {
-                list.map((data,index)=><Text key={index} left={"25px"} bottom={"40px"}>{data}</Text>)
+                list.map((data,index)=><ListSpan ><Text key={index} weight={"500"} color={"#898989"} left={"25px"} bottom={"40px"}>{data}</Text></ListSpan>)
               }
             </LeftContainer>
 
             <RightContainer>
-              <Button>Add User</Button>
+              <AddUserButton onClick={onOpen}>ADD USER</AddUserButton>
 
-                <TableContainer>
-                    <Table variant='striped' colorScheme='teal'>
-                      <Thead>
+               
+                    <Table>
+                      
                         <Tr>
-                          <Th>#</Th>
-                          <Th>Last Signed In</Th>
-                          <Th>Role</Th>
-                          <Th> </Th>
+                          <Th >#</Th>
+                          <Th >User</Th>
+                          <Th >Last Signed In</Th>
+                          <Th >Role</Th>
+                          <Th > </Th>
                         </Tr>
-                      </Thead>
+                       { user.map((data,index)=><Tr>
+                          <Td>{index+1}</Td>
+                          <Td>{data.name}</Td>
+                          <Td>{data.signin}</Td>
+                          <Td>{data.role}</Td>
+                          <Td> </Td>
+                        </Tr>
+                        )}
+                     
                     </Table>
-              </TableContainer>
+              
 
-              <ButtonContainer>
+              <ButtonContainer  left={"77%"}  top  bottom={"10"}>
+
               <Button right={"25px"} onClick={()=>{
                   if(limit>100)
                   {
@@ -86,6 +110,37 @@ function App() {
 
              </ButtonContainer>
 
+             <Modal isOpen={isOpen} onClose={onClose}>
+              <ModalContent>
+                  <ModalContainer>
+
+                    <ModalContainerLeft>
+                          <ImageContainer src={User} style={{height:"175px",width:"175px"}}/>
+                            <Text size={"10px"} weight={"400"} style={{marginTop:"15px" , padding:"10px"}}>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum</Text>
+                    </ModalContainerLeft>
+
+                    <ModalContainerRight>
+                        <Text weight={"400"} bottom={"20px"}>User Information</Text>
+                        <Text weight={"400"} bottom={"10px"} size={"15px"}>User Name</Text>
+                        <Input bottom={"25px"}></Input>
+                        <Text weight={"400"} size={"15px"} bottom={"15px"}>Role</Text>
+                        <Select width={"50%"}>
+                            <option value='Admin'>Admin</option>
+                            <option value='Owner'>Owner</option>
+                            <option value='Sales'>Sales</option>
+                        </Select>
+
+                        <ButtonContainer left={"35%"} style={{justifyContent:"space-between",width:"40%"}} top bottom={"50px"}>
+                                <ModalButton backgroundcolor={"#FEC918"} onClick={onClose}>Cancel</ModalButton>
+                                <ModalButton backgroundcolor={"#32DC87"}>Add</ModalButton>
+                        </ButtonContainer>
+                    </ModalContainerRight>
+
+                  </ModalContainer>
+                 
+              </ModalContent>
+            </Modal>
+
             </RightContainer>
 
         </MainBody>
@@ -98,14 +153,13 @@ function App() {
 const Container = styled.div`
   height: 100vh;
   width: 100vw;
-  background-color: azure;
 `;
 const NavBar = styled.section`
   height: 50px;
   width: 100%;
-  background-color: green;
   display: flex;
   justify-content: space-between;
+  border-bottom: 1px solid lightgrey;
 `;
 
 const Text = styled.p`
@@ -125,23 +179,54 @@ const Text = styled.p`
     margin-bottom:${(p) => {
     return p.bottom? p.bottom:"none";
     }};
+    font-weight:${(p) => {
+    return p.weight? p.weight:"100";
+    }};
+    &:hover{
+      color: none;
+    }
     
-    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-family: 'Sans Serif';
+`;
+
+const ListSpan = styled.span`
+      height: 50px;
+      width:100%;
+        padding: 15px 0 50px 0;
+      &:hover {
+        background-color: #00D676;
+        color: white;
+      }
+
+`;
+
+
+const Input = styled.input`
+    border: 1px solid lightgrey;
+    width: 80%;
+    border-radius: 5px;
+    outline: none;
+    margin-bottom:${(p) => {
+    return p.bottom? p.bottom:"none";
+    }};
 `;
 
 const NavBarLeft = styled.div`
   height: 100%;
-  width: 20%;
+  width: 22%;
   display: flex;
   justify-content: space-around;
   align-items: center;
-  background-color: aquamarine;
 `;
 
 const ImageContainer =styled.img`
 
   margin-right:${(p) => {
     return p.right? p.right:"none";
+    }};
+
+  height:${(p) => {
+    return p.height? p.height:"50px";
     }};
 `;
 
@@ -152,34 +237,64 @@ const NavBarRight =  styled(NavBarLeft)`
 const MainBody = styled.section`
   height:calc(100% - 50px);
   width: 100%;
-  background-color: grey;
   display: flex;
-
 `;
 
 const LeftContainer = styled.section`
   height: 100%;
-  width: 20%;
-  background-color: blueviolet;
+  width: 22%;
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   padding-top: 20px;
+  border-right: 1px solid lightgrey;
 `;
 
 const RightContainer = styled.section`
   height: 100%;
-  width: 80%;
-  background-color: brown;
+  width: 78%;
   padding-top: 40px;
+  position: relative;
+`;
+
+const Table = styled.table`
+  width:90%;
+  margin-left: 50px;
+`;
+
+const Th = styled.th`
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+`;
+
+const Td = styled.td`
+  border: 1px solid #dddddd;
+  text-align: left;
+  padding: 8px;
+`;
+
+const Tr = styled.tr`
+
 `;
 
 const ButtonContainer = styled.div`
   height: 50px;
-  width: 100%;
+  width: 25%;
   display: flex;
   justify-content: center;
   align-items: center;
+  position: absolute;
+  padding-top: 25px;
+  left:${(p) => {
+    return p.left? p.left:"0";
+    }};
+  top:${(p) => {
+    return p.top? p.top:"0";
+    }}; 
+   bottom: ${(p) => {
+    return p.bottom? p.bottom:"0";
+    }};
 `;
 
 const Button = styled.button`
@@ -187,4 +302,48 @@ const Button = styled.button`
     return p.right? p.right:"none";
     }};
 `;
+
+const AddUserButton = styled(Button)`
+    border-radius: 25px;
+    background-color: #32DC87;
+    color:white ;
+    padding: 5px 35px 5px 35px;
+    font-weight:bold;
+    margin: 30px 0 40px 50px;
+    text-align: center;
+`;
+
+const ModalContainer = styled.div`
+    height: 400px;
+    width:  150%;
+    background-color: blue;
+    display: flex;
+`;
+
+const ModalContainerLeft = styled.section`
+    height: 100%;
+    width: 40%;
+    background-color: #F87475;
+    display:flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    padding-top:25px;
+`;
+
+const ModalContainerRight = styled(ModalContainerLeft)`
+    width:60%;
+    background-color: white;
+    align-items: flex-start;
+    padding-left: 20px;
+    position: relative;
+`;
+
+const ModalButton = styled(Button)`
+    background-color:${(p) => {
+    return p.backgroundcolor? p.backgroundcolor:"black";
+    }};
+    padding: 2.5px 15px 2.5px 15px;
+`;
+
 export default App;
